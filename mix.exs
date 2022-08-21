@@ -24,7 +24,8 @@ defmodule CldrMetazone.MixProject do
     [
       {:ex_cldr, "~> 2.27"},
       {:jason, "~> 1.0"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
