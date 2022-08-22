@@ -50,5 +50,10 @@ defmodule Cldr.TimeZoneNameTest do
       assert {:error, {Cldr.UnknownLocaleError, "The locale :foo is not known."}} =
                TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :foo)
     end
+
+    test "errors if metazone is not found" do
+      assert {:error, "Metazone type \"foo\" not found"} =
+               TestBackend.TimeZoneName.metazone_for_type("foo")
+    end
   end
 end
