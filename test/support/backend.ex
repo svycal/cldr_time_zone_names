@@ -7,6 +7,6 @@ defmodule Cldr.TimeZoneName.TestBackend do
 
   use Cldr,
     default_locale: "en",
-    locales: ["en"],
+    locales: ["en", "fr"],
     providers: [Cldr.TimeZoneName]
 end

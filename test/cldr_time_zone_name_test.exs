@@ -38,6 +38,17 @@ defmodule Cldr.TimeZoneNameTest do
              } = TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :en)
     end
 
+    test "translates in non-English" do
+      assert %Metazone{
+               long: %Variants{
+                 daylight: "heure d’été du Centre",
+                 generic: "heure du centre nord-américain",
+                 standard: "heure normale du centre nord-américain"
+               },
+               short: %Variants{daylight: "HEC", generic: "HC", standard: "HNC"}
+             } = TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :fr)
+    end
+
     test "defaults to the current cldr locale" do
       TestBackend.put_locale("en")
       locale = :en
