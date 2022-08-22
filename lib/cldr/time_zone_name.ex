@@ -83,7 +83,7 @@ defmodule Cldr.TimeZoneName do
             metazones = unquote(Macro.escape(metazones))
 
             if data = metazones[type] do
-              Metazone.new(data)
+              {:ok, Metazone.new(data)}
             else
               {:error, "Metazone type \"#{type}\" not found"}
             end
