@@ -21,6 +21,11 @@ defmodule Cldr.TimeZoneNameTest do
                TestBackend.TimeZoneName.resolve("America/Chicago", "america_central", locale: :en)
     end
 
+    test "accepts regular-cased meta zone names" do
+      assert {:ok, %Info{exemplar_city: "Chicago"}} =
+               TestBackend.TimeZoneName.resolve("America/Chicago", "America_Central", locale: :en)
+    end
+
     test "merges in zone-specific overrides" do
       assert {:ok, %Info{long: %Variants{daylight: "British Summer Time"}}} =
                TestBackend.TimeZoneName.resolve("Europe/London", "gmt", locale: :en)

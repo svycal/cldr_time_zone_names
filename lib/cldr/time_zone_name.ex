@@ -1,7 +1,32 @@
 defmodule Cldr.TimeZoneName do
   @moduledoc """
-  TODO
+  Support for fetching time zone info by zone name and meta zone.
   """
+
+  alias Cldr.TimeZoneName.Info
+
+  @doc """
+  Fetches information for a given time zone and meta zone.
+
+  ## Arguments
+
+  * `zone_name` is an Olson time zone name (e.g. America/Chicago).
+  * `meta_zone` ts the meta zone type for the time zone (e.g. America_Central).
+  * `opts` is a keyword list of options.
+
+  ## Options
+
+  * `:locale` is any locale or locale name validated
+    by `Cldr.validate_locale/2`.  The default is
+    `Cldr.get_locale()` which returns the locale
+    set for the current process
+
+  """
+  @callback resolve(
+              zone_name :: Calendar.time_zone(),
+              meta_zone :: String.t(),
+              opts :: Keyword.t()
+            ) :: {:ok, Info.t()} | {:error, term()}
 
   @doc false
   def cldr_backend_provider(config) do
@@ -22,20 +47,14 @@ defmodule Cldr.TimeZoneName do
 
         alias Cldr.TimeZoneName.Info
 
+        @behaviour Cldr.TimeZoneName
+
         # Simpler than unquoting the backend everywhere
         defp backend, do: unquote(backend)
         defp get_locale, do: backend().get_locale()
         defp default_locale, do: backend().default_locale()
 
-        @doc """
-        Fetches time zone name info, given a zone name and meta zone.
-        """
-        @spec resolve(
-                zone_name :: Calendar.time_zone(),
-                meta_zone :: String.t(),
-                opts :: Keyword.t()
-              ) ::
-                {:ok, Info.t()} | {:error, term()}
+        @impl Cldr.TimeZoneName
         def resolve(zone_name, meta_zone, opts \\ []) do
           resolve_by_locale(zone_name, meta_zone, opts[:locale] || get_locale())
         end
@@ -75,7 +94,7 @@ defmodule Cldr.TimeZoneName do
                 Map.get(acc, part, %{})
               end)
 
-            meta_zone_data = meta_zones[meta_zone]
+            meta_zone_data = meta_zones[String.downcase(meta_zone)]
 
             if meta_zone_data do
               {:ok, Info.new(zone_data, meta_zone_data)}

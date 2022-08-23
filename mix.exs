@@ -8,7 +8,17 @@ defmodule CldrTimeZoneNames.MixProject do
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+      name: "Cldr Time Zone Names",
+      source_url: "https://github.com/svycal/cldr_time_zone_names",
+      homepage_url: "https://github.com/svycal/cldr_time_zone_names",
+      doc: [
+        formatters: ["html"],
+        main: "readme",
+        extras: [
+          "README.md"
+        ]
+      ]
     ]
   end
 
@@ -25,7 +35,8 @@ defmodule CldrTimeZoneNames.MixProject do
       {:ex_cldr, "~> 2.27"},
       {:jason, "~> 1.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end
 
