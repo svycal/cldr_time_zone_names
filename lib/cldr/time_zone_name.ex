@@ -35,7 +35,7 @@ defmodule Cldr.TimeZoneName do
                 meta_zone :: String.t(),
                 opts :: Keyword.t()
               ) ::
-                {:ok, Metazone.t()} | {:error, term()}
+                {:ok, Info.t()} | {:error, term()}
         def resolve(zone_name, meta_zone, opts \\ []) do
           resolve_by_locale(zone_name, meta_zone, opts[:locale] || get_locale())
         end
