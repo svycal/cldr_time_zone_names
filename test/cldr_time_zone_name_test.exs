@@ -3,70 +3,66 @@ defmodule Cldr.TimeZoneNameTest do
   use ExUnit.Case
   doctest Cldr.TimeZoneName
 
-  alias Cldr.TimeZoneName.{Metazone, Variants}
+  alias Cldr.TimeZoneName.{Info, Variants}
   alias Cldr.TimeZoneName.TestBackend
 
-  describe "available_metazones/1" do
-    test "lists available metazones" do
-      assert TestBackend.TimeZoneName.available_metazones(:en)
-             |> Enum.any?(&(&1 == "america_central"))
-    end
-
-    test "defaults to the current cldr locale" do
-      TestBackend.put_locale("en")
-      locale = :en
-
-      assert TestBackend.TimeZoneName.available_metazones() ==
-               TestBackend.TimeZoneName.available_metazones(locale)
-    end
-
-    test "errors if locale is unknown" do
-      assert {:error, {Cldr.UnknownLocaleError, "The locale :foo is not known."}} =
-               TestBackend.TimeZoneName.available_metazones(:foo)
-    end
-  end
-
-  describe "metazone_for_type/2" do
-    test "fetches the metazone" do
+  describe "resolve/3" do
+    test "fetches the meta zone data" do
       assert {:ok,
-              %Metazone{
+              %Info{
                 long: %Variants{
                   daylight: "Central Daylight Time",
                   generic: "Central Time",
                   standard: "Central Standard Time"
                 },
-                short: %Variants{daylight: "CDT", generic: "CT", standard: "CST"}
-              }} = TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :en)
+                short: %Variants{daylight: "CDT", generic: "CT", standard: "CST"},
+                exemplar_city: "Chicago"
+              }} =
+               TestBackend.TimeZoneName.resolve("America/Chicago", "america_central", locale: :en)
+    end
+
+    test "merges in zone-specific overrides" do
+      assert {:ok, %Info{long: %Variants{daylight: "British Summer Time"}}} =
+               TestBackend.TimeZoneName.resolve("Europe/London", "gmt", locale: :en)
+
+      assert {:ok, %Info{exemplar_city: "St. Barthélemy"}} =
+               TestBackend.TimeZoneName.resolve("America/St_Barthelemy", "atlantic", locale: :en)
+
+      assert {:ok, %Info{long: %Variants{standard: "Coordinated Universal Time"}}} =
+               TestBackend.TimeZoneName.resolve("Etc/UTC", "gmt", locale: :en)
     end
 
     test "translates in non-English" do
       assert {:ok,
-              %Metazone{
+              %Info{
                 long: %Variants{
                   daylight: "heure d’été du Centre",
                   generic: "heure du centre nord-américain",
                   standard: "heure normale du centre nord-américain"
                 },
                 short: %Variants{daylight: "HEC", generic: "HC", standard: "HNC"}
-              }} = TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :fr)
+              }} =
+               TestBackend.TimeZoneName.resolve("America/Chicago", "america_central", locale: :fr)
     end
 
     test "defaults to the current cldr locale" do
       TestBackend.put_locale("en")
       locale = :en
 
-      assert TestBackend.TimeZoneName.metazone_for_type("america_central") ==
-               TestBackend.TimeZoneName.metazone_for_type("america_central", locale: locale)
+      assert TestBackend.TimeZoneName.resolve("America/Chicago", "america_central") ==
+               TestBackend.TimeZoneName.resolve("America/Chicago", "america_central",
+                 locale: locale
+               )
     end
 
     test "errors if locale is unknown" do
       assert {:error, {Cldr.UnknownLocaleError, "The locale :foo is not known."}} =
-               TestBackend.TimeZoneName.metazone_for_type("america_central", locale: :foo)
+               TestBackend.TimeZoneName.resolve("America/Chicago", "america_central", locale: :foo)
     end
 
     test "errors if metazone is not found" do
       assert {:error, "Metazone type \"foo\" not found"} =
-               TestBackend.TimeZoneName.metazone_for_type("foo")
+               TestBackend.TimeZoneName.resolve("America/Chicago", "foo")
     end
   end
 end

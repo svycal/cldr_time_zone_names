@@ -20,7 +20,7 @@ defmodule Cldr.TimeZoneName do
         alias Cldr.LanguageTag
         alias Cldr.Locale
 
-        alias Cldr.TimeZoneName.Metazone
+        alias Cldr.TimeZoneName.Info
 
         # Simpler than unquoting the backend everywhere
         defp backend, do: unquote(backend)
@@ -28,75 +28,65 @@ defmodule Cldr.TimeZoneName do
         defp default_locale, do: backend().default_locale()
 
         @doc """
-        Returns all the metazone types available for a given locale.
-
-        Defaults to the current locale.
-
-        ## Example
-
-            > #{inspect(__MODULE__)}.TimeZoneName.available_metazones(:en)
-            ["bhutan", "georgia", "syowa", "hovd", "kyrgystan", "novosibirsk",
-            "yakutsk", "kosrae", "line_islands", "paraguay", "wake", "irkutsk",
-            ...]
+        Fetches time zone name info, given a zone name and meta zone.
         """
-        @spec available_metazones() :: list(String.t()) | {:error, term()}
-        @spec available_metazones(Locale.locale_name() | LanguageTag.t()) ::
-                list(String.t()) | {:error, term()}
-        def available_metazones(locale \\ get_locale())
-
-        def available_metazones(%LanguageTag{} = tag) do
-          tag
-          |> locale_for_tag()
-          |> available_metazones()
-        end
-
-        @doc """
-        Fetches a metazone by type.
-        """
-        @spec metazone_for_type(type :: String.t(), opts :: Keyword.t()) ::
+        @spec resolve(
+                zone_name :: Calendar.time_zone(),
+                meta_zone :: String.t(),
+                opts :: Keyword.t()
+              ) ::
                 {:ok, Metazone.t()} | {:error, term()}
-        def metazone_for_type(type, opts \\ []) do
-          metazone_for_type_with_locale(opts[:locale] || get_locale(), type)
+        def resolve(zone_name, meta_zone, opts \\ []) do
+          resolve_by_locale(zone_name, meta_zone, opts[:locale] || get_locale())
         end
 
-        defp metazone_for_type_with_locale(%LanguageTag{} = tag, type) do
-          tag
-          |> locale_for_tag()
-          |> metazone_for_type_with_locale(type)
+        defp resolve_by_locale(zone_name, meta_zone, %LanguageTag{
+               cldr_locale_name: cldr_locale_name
+             }) do
+          resolve_by_locale(zone_name, meta_zone, cldr_locale_name)
         end
 
         for locale_name <- Locale.Loader.known_locale_names(config) do
-          metazones =
-            locale_name
-            |> Locale.Loader.get_locale(config)
+          locale_data = Locale.Loader.get_locale(locale_name, config)
+
+          zones =
+            locale_data
+            |> Map.get(:dates, %{})
+            |> Map.get(:time_zone_names, %{})
+            |> Map.get(:zone, %{})
+
+          meta_zones =
+            locale_data
             |> Map.get(:dates, %{})
             |> Map.get(:time_zone_names, %{})
             |> Map.get(:metazone, %{})
 
-          metazone_names = Map.keys(metazones)
+          defp resolve_by_locale(zone_name, meta_zone, unquote(locale_name)) do
+            zones = unquote(Macro.escape(zones))
+            meta_zones = unquote(Macro.escape(meta_zones))
 
-          def available_metazones(unquote(locale_name)) do
-            unquote(Macro.escape(metazone_names))
-          end
+            zone_name_parts =
+              zone_name
+              |> String.split("/")
+              |> Enum.map(&String.downcase/1)
 
-          defp metazone_for_type_with_locale(unquote(locale_name), type) do
-            metazones = unquote(Macro.escape(metazones))
+            zone_data =
+              Enum.reduce(zone_name_parts, zones, fn part, acc ->
+                Map.get(acc, part, %{})
+              end)
 
-            if data = metazones[type] do
-              {:ok, Metazone.new(data)}
+            meta_zone_data = meta_zones[meta_zone]
+
+            if meta_zone_data do
+              {:ok, Info.new(zone_data, meta_zone_data)}
             else
-              {:error, "Metazone type \"#{type}\" not found"}
+              {:error, "Metazone type \"#{meta_zone}\" not found"}
             end
           end
         end
 
-        def available_metazones(locale), do: {:error, Locale.locale_error(locale)}
-
-        defp metazone_for_type_with_locale(locale, _type),
+        defp resolve_by_locale(_zone_name, _meta_zone, locale),
           do: {:error, Locale.locale_error(locale)}
-
-        defp locale_for_tag(%LanguageTag{cldr_locale_name: cldr_locale_name}),
-          do: cldr_locale_name
       end
     end
   end
