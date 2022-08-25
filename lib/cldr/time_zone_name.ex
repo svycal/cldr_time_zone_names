@@ -23,7 +23,7 @@ defmodule Cldr.TimeZoneName do
 
   """
   @callback resolve(
-              zone_name :: Calendar.time_zone(),
+              zone_name :: Elixir.Calendar.time_zone(),
               meta_zone :: String.t(),
               opts :: Keyword.t()
             ) :: {:ok, Info.t()} | {:error, term()}
