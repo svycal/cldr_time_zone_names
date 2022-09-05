@@ -14,7 +14,8 @@ defmodule CldrTimeZoneNames.MixProject do
       name: "Cldr Time Zone Names",
       source_url: "https://github.com/svycal/cldr_time_zone_names",
       homepage_url: "https://github.com/svycal/cldr_time_zone_names",
-      docs: docs()
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -49,5 +50,22 @@ defmodule CldrTimeZoneNames.MixProject do
         "LICENSE.md"
       ]
     ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Derrick Reimer"],
+      licenses: ["MIT"],
+      links: links()
+    ]
+  end
+
+  def links do
+    %{
+      "GitHub" => "https://github.com/svycal/cldr_time_zone_names",
+      "Changelog" =>
+        "https://github.com/svycal/cldr_time_zone_names/blob/v#{@version}/CHANGELOG.md",
+      "Readme" => "https://github.com/svycal/cldr_time_zone_names/blob/v#{@version}/README.md"
+    }
   end
 end
