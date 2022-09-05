@@ -10,14 +10,14 @@ defmodule Cldr.TimeZoneName do
 
   ## Arguments
 
-  * `zone_name` is an Olson time zone name (e.g. America/Chicago).
-  * `meta_zone` ts the meta zone type for the time zone (e.g. America_Central).
+  * `zone_name` is an Olson time zone name (e.g. "America/Chicago").
+  * `meta_zone` ts the meta zone type for the time zone (e.g. "America_Central").
   * `opts` is a keyword list of options.
 
   ## Options
 
   * `:locale` is any locale or locale name validated
-    by `Cldr.validate_locale/2`.  The default is
+    by `Cldr.validate_locale/2`. The default is
     `Cldr.get_locale()` which returns the locale
     set for the current process
 
@@ -99,7 +99,7 @@ defmodule Cldr.TimeZoneName do
             if meta_zone_data do
               {:ok, Info.new(zone_data, meta_zone_data)}
             else
-              {:error, "Metazone type \"#{meta_zone}\" not found"}
+              {:error, "Meta zone type \"#{meta_zone}\" not found"}
             end
           end
         end

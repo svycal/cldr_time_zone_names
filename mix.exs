@@ -1,10 +1,12 @@
 defmodule CldrTimeZoneNames.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :ex_cldr_time_zone_names,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -12,13 +14,7 @@ defmodule CldrTimeZoneNames.MixProject do
       name: "Cldr Time Zone Names",
       source_url: "https://github.com/svycal/cldr_time_zone_names",
       homepage_url: "https://github.com/svycal/cldr_time_zone_names",
-      doc: [
-        formatters: ["html"],
-        main: "readme",
-        extras: [
-          "README.md"
-        ]
-      ]
+      docs: docs()
     ]
   end
 
@@ -42,4 +38,16 @@ defmodule CldrTimeZoneNames.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp docs do
+    [
+      source_ref: "v#{@version}",
+      main: "readme",
+      extras: [
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE.md"
+      ]
+    ]
+  end
 end

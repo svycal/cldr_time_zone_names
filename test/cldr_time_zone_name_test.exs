@@ -66,7 +66,7 @@ defmodule Cldr.TimeZoneNameTest do
     end
 
     test "errors if metazone is not found" do
-      assert {:error, "Metazone type \"foo\" not found"} =
+      assert {:error, "Meta zone type \"foo\" not found"} =
                TestBackend.TimeZoneName.resolve("America/Chicago", "foo")
     end
   end

@@ -1,11 +1,10 @@
 # Cldr Time Zone Names
 
-`ex_cldr_time_zone_names` is an addon library application for [ex_cldr](https://hex.pm/packages/ex_cldr) that packages time zone name definitions.
+A plugin for [ex_cldr](https://hex.pm/packages/ex_cldr) that packages time zone name definitions.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_cldr_time_zone_names` to your list of dependencies in `mix.exs`:
+Add `ex_cldr_time_zone_names` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +14,39 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/cldr_metazone>.
+Then, add the plugin to your [CLDR backend](https://hexdocs.pm/ex_cldr/readme.html#backend-module-configuration):
+
+```elixir
+defmodule MyApp.Cldr do
+  use Cldr,
+    providers: [
+      Cldr.TimeZoneNames,
+      # ...
+    ],
+    # ...
+end
+```
+
+## Usage
+
+This plugin provides functions for looking up time zone name data for a given IANA time zone name and [meta zone name](https://github.com/unicode-org/cldr/blob/4667907abd60081c29f0b110623efc4ec545d844/common/supplemental/metaZones.xml) (e.g. `America_Central`).
+
+```elixir
+# Look up the name information for US Central Time in English
+iex> MyApp.Cldr.TimeZoneName.resolve("America/Chicago", "america_central", locale: :en)
+{:ok,
+ %Cldr.TimeZoneName.Info{
+   exemplar_city: "Chicago",
+   long: %Cldr.TimeZoneName.Variants{
+     daylight: "Central Daylight Time",
+     generic: "Central Time",
+     standard: "Central Standard Time"
+   },
+   short: %Cldr.TimeZoneName.Variants{
+     daylight: "CDT",
+     generic: "CT",
+     standard: "CST"
+   }
+ }}
+```
 
