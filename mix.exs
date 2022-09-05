@@ -15,6 +15,7 @@ defmodule CldrTimeZoneNames.MixProject do
       source_url: "https://github.com/svycal/cldr_time_zone_names",
       homepage_url: "https://github.com/svycal/cldr_time_zone_names",
       docs: docs(),
+      description: description(),
       package: package()
     ]
   end
@@ -50,6 +51,10 @@ defmodule CldrTimeZoneNames.MixProject do
         "LICENSE.md"
       ]
     ]
+  end
+
+  defp description do
+    "A plugin for ex_cldr that packages time zone name definitions."
   end
 
   defp package do
