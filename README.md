@@ -1,4 +1,4 @@
-# Cldr Time Zone Names [![Version](https://img.shields.io/hexpm/v/ex_cldr_time_zone_names)](https://hexdocs.pm/ex_cldr_time_zone_names/readme.html)
+# Cldr Time Zone Names [![Hex Docs](https://img.shields.io/hexpm/v/ex_cldr_time_zone_names)](https://hexdocs.pm/ex_cldr_time_zone_names/readme.html)
 
 A plugin for [ex_cldr](https://hex.pm/packages/ex_cldr) that packages time zone name definitions.
 
