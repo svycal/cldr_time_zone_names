@@ -20,7 +20,7 @@ Then, add the plugin to your [CLDR backend](https://hexdocs.pm/ex_cldr/readme.ht
 defmodule MyApp.Cldr do
   use Cldr,
     providers: [
-      Cldr.TimeZoneNames,
+      Cldr.TimeZoneName,
       # ...
     ],
     # ...
